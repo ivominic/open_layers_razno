@@ -1,0 +1,392 @@
+<!doctype html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title> Svetiljke Tivat </title>
+        <link rel="stylesheet" href="../assets/ol3/css/ol.css" type="text/css" />
+        <link rel="stylesheet" href="../assets/css/samples.css" type="text/css" />                
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div class="row">
+            <div class='panel-heading text-center panel-relative'>
+                <h1>Katastar ulične rasvjete u Tivtu</h1>
+            </div>            
+        </div>
+        <div class="row">
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="atribut">Odaberite atribut pretrage:</label>
+                    <select class="form-control" id="atribut">
+                        <option value="tip_stuba">Tip stuba</option>
+                        <option value="visina_stu">Visina stuba</option>
+                        <option value="broj_sveti">Broj svetiljki</option>
+                        <option value="snaga_sija">Snaga sijalice</option>
+                        <option value="tip_sijali">Tip sijalice</option>
+                        <option value="trafostani">Trafostanica</option>
+                        <option value="udaljenost">Udaljenost</option>
+                        <option value="ulica_nazi">Naziv ulice</option>
+                        <option value="tip_mreze">Tip mreže</option>
+                        <option value="oznaka_sve">Oznaka svetiljke</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="vrijednost">Vrijednost za pretra&#382;ivanje:</label>
+                    <input type="text" class="form-control" id="vrijednost">
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary" id="btnPretraga" onclick="pretraga()">Pretraga</button>
+                    <button type="button" class="btn btn-danger" id="btnRestart" onclick="restartovanje()">Restart</button>
+                </div>                
+                    <div id="info"></div>
+                    <div id="layertree"></div>    
+                    <div id="name"></div>
+            </div>
+            <div class="col-md-10">
+                    <div id="map" class="half-map"></div>
+                    <div id="overlay" style="background-color: white; border-radius:10px; border: 1px solid black; padding: 5px 10px;"></div>
+            </div>
+        </div>
+        
+
+    
+
+    <!--<script src="../assets/ol3/js/ol.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.6.0/ol.js"></script>
+    <!--<script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0/build/ol.js"></script>-->
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>            
+
+
+        var tiledRaster = new ol.layer.Tile({source: new ol.source.OSM(), name: "Podloga"});
+        var fill = new ol.style.Fill({
+            color: 'rgba(0,0,0,0.2)'
+        });
+        var stroke = new ol.style.Stroke({
+            color: 'rgba(0,0,0,0.4)'
+        });
+        var circle = new ol.style.Circle({
+            radius: 6,
+            fill: fill,
+            stroke: stroke
+        });
+        var vectorStyle = new ol.style.Style({
+            fill: fill,
+            stroke: stroke,
+            image: circle
+        });
+        var defaultStyle = new ol.style.Style({
+            fill: fill,
+            stroke: stroke,
+            image: circle
+        });   
+
+            var visok = [64,196,64,0.3];
+            var srednji = [108,152,64,0.3];
+            var nizak = [152,108,64,0.3];
+            var ostalo = [196,32,32,0.3];
+
+            var visineStubova = {
+                10: visok,
+                7: srednji,
+                6: nizak,
+                4: ostalo
+            }
+
+    var styleCache = {};
+    function styleFunction(feature, resolution) {
+        var visina = feature.get('visina_stu');
+        if (!visina || !visineStubova[visina]) {
+            return [defaultStyle];
+        }
+        if (!styleCache[visina]) {
+            styleCache[visina] = new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: visineStubova[visina]
+                }),
+                stroke: defaultStyle.stroke,
+                image: new ol.style.Circle({
+                    radius: 6,
+                    fill: new ol.style.Fill({
+                        color: visineStubova[visina]
+                    }),
+                    stroke: stroke
+                })
+            });
+        }
+        return [styleCache[visina]];
+    }
+
+
+    var vectorSource = new ol.source.Vector({ 
+        format: new ol.format.GeoJSON(), 
+        url: 'http://localhost/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typename=winsoft:svetiljke&outputFormat=application/json&srsname=EPSG:4326'         
+    });
+
+
+function pretraga(){
+    var atributPretrage = $("#atribut option:selected").val();
+    var vrijednostPretrage = $("#vrijednost").val();
+    if(vrijednostPretrage.trim() === ''){
+        alert('Potrebno je unijeti vrijednost za pretragu.');
+        return false
+    }
+
+    //Filtriranje sourcea
+    //console.log(vectorLayer.getSource().getFeatures());
+    vectorLayer.getSource().forEachFeature(function(feature) {
+        if(feature.get(atributPretrage)!==vrijednostPretrage){
+            vectorLayer.getSource().removeFeature(feature);
+        }           
+    });
+
+    if(isNaN(vrijednostPretrage.trim())){
+	    vrijednostPretrage = "'" + vrijednostPretrage + "'";
+    }
+    
+    svetiljkeRaster.setSource(new ol.source.TileWMS({
+        url: 'http://localhost/geoserver/winsoft/wms',
+        params: {
+            'LAYERS': 'winsoft:svetiljke'
+            ,'cql_filter': atributPretrage + ' = ' + vrijednostPretrage
+        },
+        crossOrigin: 'anonymous' 
+    }))
+
+}
+
+
+function restartovanje(){
+    vectorLayer.getSource().clear();
+    vectorLayer.setSource(new ol.source.Vector({ 
+        format: new ol.format.GeoJSON(), 
+        url: 'http://localhost/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typename=winsoft:svetiljke&outputFormat=application/json&srsname=EPSG:4326' 
+    }));
+    vectorLayer.getSource().changed();
+    //map.updateSize();    
+
+    //svetiljkeRaster.getSource().clear();
+    svetiljkeRaster.setSource(new ol.source.TileWMS({
+        url: 'http://localhost/geoserver/winsoft/wms',
+        params: {
+            'LAYERS': 'winsoft:svetiljke'            
+        },
+        crossOrigin: 'anonymous' 
+    }))
+}
+
+  var vectorLayer = new ol.layer.Vector({
+    title: "Vektorski podaci",
+    name: "Svetiljke vektorski",
+    source: vectorSource,
+    //style: vectorStyle
+    style: styleFunction
+  });
+
+
+    var svetiljkeRaster = new ol.layer.Tile({
+        title: "Svetiljke raster",
+        name: "Svetiljke raster",
+        source: new ol.source.TileWMS({
+            url: 'http://localhost/geoserver/winsoft/wms',
+            params: {
+                'LAYERS': 'winsoft:svetiljke'
+                //,'cql_filter': "id=217"         
+            },
+            crossOrigin: 'anonymous' 
+        })
+    })
+
+var overlay = new ol.Overlay({position: 'bottom-center', element: document.getElementById('overlay')});
+
+            var center = ol.proj.transform([18.8, 42.4], 'EPSG:4326', 'EPSG:3857');
+            var view = new ol.View({
+                center: center,
+                zoom: 12,
+            });
+
+            var map = new ol.Map({
+                target: 'map',
+                layers: [tiledRaster, svetiljkeRaster, vectorLayer],//
+                view: view
+            });
+
+            //map.addControl(new ol.Control.LayerSwitcher());
+
+
+
+
+
+
+            var dragAndDrop = new ol.interaction.DragAndDrop({
+                formatConstructors: [
+                ol.format.GPX,
+                ol.format.GeoJSON,
+                ol.format.IGC,
+                ol.format.KML,
+                ol.format.TopoJSON
+                ]
+            });
+
+            dragAndDrop.on('addfeatures', function(event) {
+                var vectorSource = new ol.source.Vector({
+                    features: event.features,
+                    projection: event.projection
+                });
+                map.getLayers().push(new ol.layer.Vector({
+                    source: vectorSource,
+                    style: vectorStyle
+                }));
+                view.fitExtent(vectorSource.getExtent(), map.getSize());
+            });
+            map.addInteraction(dragAndDrop);
+
+
+
+//Klik na feature
+map.on('click', onMouseClick);
+
+function onMouseClick(browserEvent) {
+    var coordinate = browserEvent.coordinate;
+    var pixel = map.getPixelFromCoordinate(coordinate);
+    var element = overlay.getElement();
+    //var el = document.getElementById('name');
+    element.innerHTML = '';
+    map.forEachFeatureAtPixel(pixel, function(feature) {
+        element.innerHTML += 'Tip stuba: '+ feature.get('tip_stuba') + '<br>';
+        element.innerHTML += 'Visina stuba: '+ feature.get('visina_stu') + '<br>';
+        element.innerHTML += 'Broj svetiljki: '+ feature.get('broj_sveti') + '<br>';
+        element.innerHTML += 'Snaga sijalice: '+ feature.get('snaga_sija') + '<br>';
+        element.innerHTML += 'Tip sijalice: '+ feature.get('tip_sijali') + '<br>';
+        element.innerHTML += 'Trafostanica: '+ feature.get('trafostani') + '<br>';
+        element.innerHTML += 'Udaljenost: ' + feature.get('udaljenost') + '<br>';
+        element.innerHTML += 'Naziv ulice: ' + feature.get('ulica_nazi') + '<br>';
+        element.innerHTML += 'Tip mreže: ' + feature.get('tip_mreze') + '<br>';
+        element.innerHTML += 'Oznaka svetiljke: ' + feature.get('oznaka_sve') + '<br><hr>';      
+
+    });
+    overlay.setPosition(coordinate);
+    map.addOverlay(overlay);
+}
+
+
+
+
+
+
+//Dodavanje drveta lejera
+// Name the root layer group
+map.getLayerGroup().set('name', 'Lejeri');
+
+/**
+ * Build a tree layer from the map layers with visible and opacity 
+ * options.
+ * 
+ * @param {type} layer
+ * @returns {String}
+ */
+function buildLayerTree(layer) {
+    var elem;
+    var name = layer.get('name') ? layer.get('name') : "Group";
+    var div = "<li data-layerid='" + name + "'>" +
+            "<span><i class='glyphicon glyphicon-file'></i> " + layer.get('name') + "</span>" +
+            "<i class='glyphicon glyphicon-check'></i> ";            
+    if (layer.getLayers) {
+        var sublayersElem = ''; 
+        var layers = layer.getLayers().getArray(),
+                len = layers.length;
+        for (var i = len - 1; i >= 0; i--) {
+            sublayersElem += buildLayerTree(layers[i]);
+        }
+        elem = div + " <ul>" + sublayersElem + "</ul></li>";
+    } else {
+        elem = div + " </li>";
+    }
+    return elem;
+}
+
+/**
+ * Initialize the tree from the map layers
+ * @returns {undefined}
+ */
+function initializeTree() {
+
+    var elem = buildLayerTree(map.getLayerGroup());
+    $('#layertree').empty().append(elem);
+
+    $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
+    $('.tree li.parent_li > span').on('click', function(e) {
+        var children = $(this).parent('li.parent_li').find(' > ul > li');
+        if (children.is(":visible")) {
+            children.hide('fast');
+            $(this).attr('title', 'Expand this branch').find(' > i').addClass('glyphicon-plus').removeClass('glyphicon-minus');
+        } else {
+            children.show('fast');
+            $(this).attr('title', 'Collapse this branch').find(' > i').addClass('glyphicon-minus').removeClass('glyphicon-plus');
+        }
+        e.stopPropagation();
+    });
+}
+
+/**
+ * Finds recursively the layer with the specified key and value.
+ * @param {ol.layer.Base} layer
+ * @param {String} key
+ * @param {any} value
+ * @returns {ol.layer.Base}
+ */
+function findBy(layer, key, value) {
+    if (layer.get(key) === value) {
+        console.log(layer);
+        console.log(key);
+        console.log(value);
+        return layer;        
+    }
+
+    // Find recursively if it is a group
+    if (layer.getLayers) {
+        var layers = layer.getLayers().getArray(),
+                len = layers.length, result;
+        for (var i = 0; i < len; i++) {
+            result = findBy(layers[i], key, value);
+            if (result) {
+                console.log(result);
+                return result;
+            }
+        }
+    }
+
+    return null;
+}
+
+
+$(document).ready(function() {
+
+    initializeTree();
+
+    // Handle visibility control
+    $('i').on('click', function() {
+        var layername = $(this).closest('li').data('layerid');
+        var layer = findBy(map.getLayerGroup(), 'name', layername);
+
+        layer.setVisible(!layer.getVisible());
+
+        if (layer.getVisible()) {
+            $(this).removeClass('glyphicon-unchecked').addClass('glyphicon-check');
+        } else {
+            $(this).removeClass('glyphicon-check').addClass('glyphicon-unchecked');
+        }
+    });
+
+});
+
+
+
+
+
+        </script>
+    </body>
+</html>

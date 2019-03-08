@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WFS example</title>
+<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.6.0/ol.css" type="text/css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.6.0/ol.js"></script>
+
+</head>
+<body>
+<div class="container-fluid">
+
+<div class="row-fluid">
+  <div class="span12">
+    <div id="map" class="map"></div>
+  </div>
+</div>
+
+</div>
+<script>
+var tiledRaster = new ol.layer.Tile({source: new ol.source.OSM()});
+
+
+/*
+// format used to parse WFS GetFeature responses
+var geojsonFormat = new ol.format.GeoJSON();
+
+
+var vectorSource = new ol.source.Vector({
+  loader: function(extent, resolution, projection) {
+    var url = 'http://localhost/geoserver/wfs?service=WFS&' +
+        'version=1.1.0&request=GetFeature&typename=cite:ij1801svetiljke&' +
+        'outputFormat=text/javascript&format_options=callback:loadFeatures' +
+        '&srsname=EPSG:4326&bbox=' + extent.join(',') + ',EPSG:4326';
+    // use jsonp: false to prevent jQuery from adding the "callback"
+    // parameter to the URL
+    $.ajax({url: url, dataType: 'jsonp', jsonp: false});
+  },
+  strategy: ol.loadingstrategy.tile(ol.tilegrid.createXYZ({
+    maxZoom: 19
+  }))
+});
+
+//&bbox=6557540.0,4698775.0,6558115.0,4699491.0&width=616&height=768&srs=EPSG:3908&format=application/openlayers
+
+
+
+window.loadFeatures = function(response) {
+  vectorSource.addFeatures(geojsonFormat.readFeatures(response));
+};
+
+var vector = new ol.layer.Vector({
+  source: vectorSource,
+  style: new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: 'rgba(0, 0, 255, 1.0)',
+      width: 2
+    })
+  })
+});
+
+*/
+            // Source retrieving WFS data in GeoJSON format using JSONP technique
+            var vectorSourceJsonp = new ol.source.Vector({
+                format: new ol.format.GeoJSON(),
+                loader: function(extent, resolution, projection) {
+                    /*var url = 'http://localhost/geoserver/wfs?'+
+                        'service=WFS&request=GetFeature&'+
+                        'version=1.1.0&typename=cite:ij1801svetiljke&'+
+                        'outputFormat=text/javascript&'+
+                        'format_options=callback:loadFeatures&' +
+                        'srsname=EPSG:4326&'+
+                        'bbox=' + extent.join(',');*/
+                        var url ='http://localhost/geoserver/cite/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:ij1801svetiljke&maxFeatures=50&outputFormat=text%2Fjavascript';
+
+                    $.ajax({
+                        url: url,
+                        dataType: 'jsonp'
+                    });
+                },
+                strategy: ol.loadingstrategy.tile(ol.tilegrid.createXYZ({
+                    maxZoom: 19
+                })),
+                projection: 'EPSG:4326'
+            });
+
+            // Executed when data is loaded by the $.ajax method.
+            var loadFeatures = function(response) {
+                console.log(response);
+                vectorSourceJsonp.addFeatures(vectorSourceJsonp.readFeatures(response));
+            };
+
+            // Vector layer
+            var vectorLayerJsonp = new ol.layer.Vector({
+                source: vectorSourceJsonp,
+                style: new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: 'green',
+                        width: 2
+                    })
+                })
+            });
+        
+
+var map = new ol.Map({
+  layers: [tiledRaster, vectorLayerJsonp],
+  target: document.getElementById('map'),
+  view: new ol.View({
+    center: ol.proj.transform([18.6, 42.4], 'EPSG:4326', 'EPSG:3857'),
+    maxZoom: 19,
+    zoom: 12
+  })
+});
+
+</script>
+</body>
+</html>

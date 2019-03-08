@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WFS - GetFeature</title>
+    <link rel="stylesheet" href="https://openlayers.org/en/v3.19.1/css/ol.css" type="text/css">
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v3.19.1/build/ol.js"></script>
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+    <script>
+
+            var fill = new ol.style.Fill({
+                color: 'rgba(0,0,0,0.2)'
+            });
+            var stroke = new ol.style.Stroke({
+                color: 'rgba(0,0,0,0.4)'
+            });
+            var circle = new ol.style.Circle({
+                radius: 6,
+                fill: fill,
+                stroke: stroke
+            });
+            var vectorStyle = new ol.style.Style({
+                fill: fill,
+                stroke: stroke,
+                image: circle
+            });  
+
+      var vectorSource = new ol.source.Vector();
+      var vector = new ol.layer.Vector({
+        source: vectorSource,
+        style: vectorStyle
+      });
+
+      var raster = new ol.layer.Tile({source: new ol.source.OSM()});
+
+      var map = new ol.Map({
+        layers: [raster, vector],
+        target: document.getElementById('map'),
+        view: new ol.View({
+          center: ol.proj.transform([18.6, 42.4], 'EPSG:4326', 'EPSG:3857'),
+          maxZoom: 19,
+          zoom: 12
+        })
+      });
+
+      // generate a GetFeature request
+      var featureRequest = new ol.format.WFS().writeGetFeature({
+        srsName: 'EPSG:4326',
+        featureNS: 'http://localhost',
+        featurePrefix: 'cite',
+        featureTypes: ['ij1801svetiljke'],
+        outputFormat: 'application/json',
+        filter: ol.format.filter.and(
+          ol.format.filter.like('stubvisina', '10'),          
+        )
+      });
+
+      // then post the request and add the received features to a layer
+      fetch('https://ahocevar.com/geoserver/wfs', {
+        method: 'POST',
+        body: new XMLSerializer().serializeToString(featureRequest)
+      }).then(function(response) {
+        return response.json();
+      }).then(function(json) {
+        var features = new ol.format.GeoJSON().readFeatures(json);
+        vectorSource.addFeatures(features);
+        map.getView().fit(vectorSource.getExtent(), /** @type {ol.Size} */ (map.getSize()));
+      });
+    </script>
+  </body>
+</html>

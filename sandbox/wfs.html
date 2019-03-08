@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WFS example</title>
+<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.6.0/ol.css" type="text/css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.6.0/ol.js"></script>
+
+</head>
+<body>
+<div class="container-fluid">
+
+<div class="row-fluid">
+  <div class="span12">
+    <div id="map" class="map"></div>
+  </div>
+</div>
+<div id="overlay" style="background-color: white; border-radius:10px; border: 1px solid black; padding: 5px 10px;"></div>
+
+</div>
+<script>
+    var tiledRaster = new ol.layer.Tile({source: new ol.source.OSM()});
+
+    var fill = new ol.style.Fill({
+        color: 'rgba(0,0,0,0.2)'
+    });
+    var stroke = new ol.style.Stroke({
+        color: 'rgba(0,0,0,0.4)'
+    });
+    var circle = new ol.style.Circle({
+        radius: 6,
+        fill: fill,
+        stroke: stroke
+    });
+    var vectorStyle = new ol.style.Style({
+        fill: fill,
+        stroke: stroke,
+        image: circle
+    });   
+    var defaultStyle = new ol.style.Style({
+        fill: fill,
+        stroke: stroke,
+        image: circle
+    });   
+
+    var visok = [64,196,64,0.3];
+    var srednji = [108,152,64,0.3];
+    var nizak = [152,108,64,0.3];
+    var ostalo = [196,32,32,0.3];
+
+    var visineStubova = {
+        10: visok,
+        7: srednji,
+        6: nizak,
+        4: ostalo
+    }
+
+    var styleCache = {};
+    function styleFunction(feature, resolution) {
+        var visina = feature.get('stubvisina');
+        if (!visina || !visineStubova[visina]) {
+            return [defaultStyle];
+        }
+        if (!styleCache[visina]) {
+            styleCache[visina] = new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: visineStubova[visina]
+                }),
+                stroke: defaultStyle.stroke,
+                image: new ol.style.Circle({
+                    radius: 6,
+                    fill: new ol.style.Fill({
+                        color: visineStubova[visina]
+                    }),
+                    stroke: stroke
+                })
+            });
+        }
+        return [styleCache[visina]];
+    }
+
+
+
+
+
+
+
+
+    var vectorSource = new ol.source.Vector({ 
+        format: new ol.format.GeoJSON(), 
+        url: 'http://localhost/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typename=cite:ij1801svetiljke&outputFormat=application/json&srsname=EPSG:4326' 
+    });
+
+
+var key = vectorSource.on('change', function(event) {
+    if (event.target.getState() == 'ready') {
+        vectorSource.unByKey(key);
+        vectorSource.forEachFeature(function(feature) {
+            if(feature.get('stubvisina')==='10'){
+                console.log(feature.getKeys());
+                console.log(feature.getProperties());
+                console.log(feature.get('stubvisina'));
+            }else{
+                //vectorSource.removeFeature(feature);
+                console.log(feature.get('stubvisina'));
+                console.log('razlicito od 10');
+            }            
+        });
+    }
+});
+
+
+
+  var vectorLayer = new ol.layer.Vector({
+    source: vectorSource,
+    //style: vectorStyle
+    style: styleFunction
+  });
+
+var overlay = new ol.Overlay({position: 'bottom-center', element: document.getElementById('overlay')});
+        
+
+var map = new ol.Map({
+  layers: [tiledRaster, vectorLayer],
+  target: document.getElementById('map'),
+  view: new ol.View({
+    center: ol.proj.transform([18.6, 42.4], 'EPSG:4326', 'EPSG:3857'),
+    maxZoom: 19,
+    zoom: 12
+  })
+});
+
+
+
+
+//Klik na feature
+map.on('click', onMouseClick);
+
+function onMouseClick(browserEvent) {
+    var coordinate = browserEvent.coordinate;
+    var pixel = map.getPixelFromCoordinate(coordinate);
+    var element = overlay.getElement();
+    //var el = document.getElementById('name');
+    element.innerHTML = '';
+    map.forEachFeatureAtPixel(pixel, function(feature) {
+        element.innerHTML += 'Visina stuba: ' + feature.get('stubvisina') + '<br>';
+        element.innerHTML += 'Slika: ' + feature.get('fileuri') + '<br><hr>';
+        console.log(feature.get('stubvisina'));
+    });
+    overlay.setPosition(coordinate);
+    map.addOverlay(overlay);
+}
+
+</script>
+</body>
+</html>
