@@ -259,8 +259,26 @@
             })
             .then(function(json) {
               let odgovor = JSON.parse(json);
-              //console.log("json count", odgovor.features.length);
-              console.log("json", odgovor.features[0]["id"]);
+              if (odgovor.features.length > 0) {
+                var selektovano = odgovor.features[0]["properties"];
+                /*element.innerHTML += "Id: " + odgovor.features[0]["id"] + "<br>";
+                element.innerHTML += "Visina stabla: " + selektovano["visinastab"] + "<br>";
+                element.innerHTML += "Visina debla: " + selektovano["visinadebl"] + "<br>";
+                element.innerHTML += "Obim stabla: " + selektovano["obim"] + "<br>";
+                element.innerHTML += "Širina krošnje: " + selektovano["sirinakros"] + "<br>";
+                element.innerHTML += "Sječa debeli grana: " + selektovano["sjecadebel"] + "<br>";
+                element.innerHTML += "Premazivanje: " + selektovano["premazivan"] + "<br>";
+                element.innerHTML += "Tip: " + selektovano["tip"] + "<br>";
+                element.innerHTML += "Napomena: " + selektovano["napomena"] + "<br>";*/
+                //element.innerHTML += "Slika: " + selektovano["fileuri"] + "<br>";
+                element.innerHTML +=
+                  '<a target="_blank" href="' +
+                  "../assets/img/JPEG_20191001_084556_4536578329577545580.jpg" +
+                  '"><img src="' +
+                  "../assets/img/JPEG_20191001_084556_4536578329577545580.jpg" +
+                  '" alt="Forest"></a>' +
+                  "<br>";
+              }
             });
         }
 
