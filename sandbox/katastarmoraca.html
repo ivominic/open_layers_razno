@@ -166,8 +166,8 @@
 
     var vectorSource = new ol.source.Vector({ 
         format: new ol.format.GeoJSON(), 
-        url: 'http://localhost/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typename=winsoft:' + $("#katastar option:selected").val() + '&outputFormat=application/json&srsname=EPSG:4326' 
-        //url: 'http://localhost/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=svijet:katastar_sliv_morace&outputFormat=application/json&srsname=EPSG:4326'
+        url: 'http://localhost:8088/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typename=winsoft:' + $("#katastar option:selected").val() + '&outputFormat=application/json&srsname=EPSG:4326' 
+        //url: 'http://localhost:8088/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=svijet:katastar_sliv_morace&outputFormat=application/json&srsname=EPSG:4326'
     });
 
 $('#katastar').on('change', function() {
@@ -210,7 +210,7 @@ function pretraga(){
     });
 
     rasterLayer.setSource(new ol.source.TileWMS({
-        url: 'http://localhost/geoserver/winsoft/wms',
+        url: 'http://localhost:8088/geoserver/winsoft/wms',
         params: {
             'LAYERS': 'winsoft:' + $("#katastar option:selected").val()
             ,'cql_filter': atributPretrage + ' = ' + vrijednostPretrage
@@ -225,14 +225,14 @@ function restartovanje(){
     vectorLayer.getSource().clear();
     vectorLayer.setSource(new ol.source.Vector({ 
         format: new ol.format.GeoJSON(), 
-        url: 'http://localhost/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typename=winsoft:' + $("#katastar option:selected").val() + '&outputFormat=application/json&srsname=EPSG:4326' 
-        //url: 'http://localhost/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=svijet:katastar_sliv_morace&outputFormat=application/json&srsname=EPSG:4326'        
+        url: 'http://localhost:8088/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typename=winsoft:' + $("#katastar option:selected").val() + '&outputFormat=application/json&srsname=EPSG:4326' 
+        //url: 'http://localhost:8088/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=svijet:katastar_sliv_morace&outputFormat=application/json&srsname=EPSG:4326'        
     }));
     vectorLayer.getSource().changed();    
     //map.updateSize();    
 
     rasterLayer.setSource(new ol.source.TileWMS({
-        url: 'http://localhost/geoserver/winsoft/wms',
+        url: 'http://localhost:8088/geoserver/winsoft/wms',
         params: {
             'LAYERS': 'winsoft:' + $("#katastar option:selected").val()           
         },
@@ -250,7 +250,7 @@ function restartovanje(){
 
 
 var prviSource = new ol.source.TileWMS({
-              url: 'http://localhost/geoserver/winsoft/wms',
+              url: 'http://localhost:8088/geoserver/winsoft/wms',
               params: {'LAYERS': 'winsoft:prostorni_registar'},
               projection: 'EPSG:3908',
               crossOrigin: 'anonymous' 
@@ -267,7 +267,7 @@ var prviSource = new ol.source.TileWMS({
         title: "Raster lejer",
         name: "Raster lejer",
         source: new ol.source.TileWMS({
-            url: 'http://localhost/geoserver/winsoft/wms',
+            url: 'http://localhost:8088/geoserver/winsoft/wms',
             params: {
                 'LAYERS': 'winsoft:' + $("#katastar option:selected").val()
                 //,'cql_filter': "id=217"         
