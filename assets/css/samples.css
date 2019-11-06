@@ -8,9 +8,11 @@ img {
   border: 1px solid #ddd;
   border-radius: 4px;
   padding: 5px;
-  width: 750px;
+  width: 550px;
+  transform: rotate(90deg);
+  opacity: 1 !important;
 }
 
-img:hover {
+/*img:hover {
   box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
-}
+}*/

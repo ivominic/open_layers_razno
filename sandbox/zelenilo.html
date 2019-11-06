@@ -15,47 +15,179 @@
     </div>
     <div class="row"></div>
     <div class="row">
-      <div class="col-md-2">
+      <div class="col-md-3">
         <div class="form-group">
-          <label for="katastar">Odaberite katastarsku opstinu:</label>
-          <select class="form-control" id="katastar">
-            <option value="drvece">Drveće</option>
-            <option value="bioce">Bioče</option>
-            <option value="bjelosevina">Bjeloševina</option>
-            <option value="blizna">Blizna</option>
-            <option value="doljani">Doljani</option>
-            <option value="dragovica_polje">Dragovića Polje</option>
-          </select>
+          <div class="col-md-6">
+            <label for="latinskiNaziv">Latinski naziv:</label>
+            <input type="text" id="latinskiNaziv" />
+          </div>
+          <div class="col-md-6">
+            <label for="narodniNaziv">Narodni naziv:</label>
+            <input type="text" id="narodniNaziv" />
+          </div>
         </div>
         <div class="form-group">
-          <label for="atribut">Odaberite atribut pretrage:</label>
-          <select class="form-control" id="atribut">
-            <option value="broj">Broj</option>
-            <option value="podbroj">Podbroj</option>
-            <option value="nacinkoris">Način korišćenja</option>
-            <option value="povrsina">Površina</option>
-            <option value="listnepokr">List nepokretnosti</option>
-            <option value="potes">Potes</option>
-            <option value="osnovstica">Osnov sticanja</option>
-            <option value="klasazemlj">Klasa zemljišta</option>
-            <option value="tipzemljis">Tip zemljišta</option>
-          </select>
+          <div class="col-md-6">
+            <label for="tip">Tip:</label>
+            <input type="text" id="tip" />
+          </div>
+          <div class="col-md-6">
+            <label for="tipKragne">Tip kragne:</label>
+            <input type="text" id="tipKragne" />
+          </div>
         </div>
         <div class="form-group">
-          <label for="vrijednost">Vrijednost za pretra&#382;ivanje:</label>
-          <input type="text" class="form-control" id="vrijednost" />
+          <div class="col-md-6">
+            <label for="visinaStabla">Visina stabla (m):</label>
+            <input type="number" id="visinaStabla" />
+          </div>
+          <div class="col-md-6">
+            <label for="visinaDebla">Visina debla (m):</label>
+            <input type="number" id="visinaDebla" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-6">
+            <label for="prsniPrecnik">Prsni prečnik (cm):</label>
+            <input type="number" id="prsniPrecnik" />
+          </div>
+          <div class="col-md-6">
+            <label for="sirinaKrosnje">Širina krošnje:</label>
+            <input type="number" id="sirinaKrosnje" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-6">
+            <label for="fitopatoloskePromjene">Fitopatološke promjene:</label>
+            <input type="text" id="fitopatoloskePromjene" />
+          </div>
+          <div class="col-md-6">
+            <label for="vrstaFitopatoloskePromjene">Vrsta fp promjene:</label>
+            <input type="text" id="vrstaFitopatoloskePromjene" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-6">
+            <label for="entomoloskePromjene">Entomološke promjene:</label>
+            <input type="text" id="entomoloskePromjene" />
+          </div>
+          <div class="col-md-6">
+            <label for="vrstaEntomoloskePromjene">Vrsta em promjene:</label>
+            <input type="text" id="vrstaEntomoloskePromjene" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-6">
+            <label for="izrazenostOtvoreneTruleziDebla">Izražena trulež debla:</label>
+            <input type="text" id="izrazenostOtvoreneTruleziDebla" />
+          </div>
+          <div class="col-md-6">
+            <label for="velicinaOtvoreneTruleziDebla">Veličina truleži debla:</label>
+            <input type="text" id="velicinaOtvoreneTruleziDebla" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-6">
+            <label for="izrazenostOtvoreneTruleziGrana">Izražena trulež grana:</label>
+            <input type="text" id="izrazenostOtvoreneTruleziGrana" />
+          </div>
+          <div class="col-md-6">
+            <label for="velicinaOtvoreneTruleziGrana">Veličina truleži grana:</label>
+            <input type="text" id="velicinaOtvoreneTruleziGrana" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-6">
+            <label for="ocjenaVitalnosti">Ocjena vitalnosti:</label>
+            <input type="text" id="ocjenaVitalnosti" />
+          </div>
+          <div class="col-md-6">
+            <label for="ocjenaDekorativnosti">Ocjena dekorativnosti:</label>
+            <input type="text" id="ocjenaDekorativnosti" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-6">
+            <label for="starost">Starost (godina):</label>
+            <input type="number" id="starost" />
+          </div>
+          <div class="col-md-6">
+            <label for="ocekivanoTrajanjeZivota ">Vijek trajanja (godina):</label>
+            <input type="number" id="ocekivanoTrajanjeZivota" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-6">
+            <label for="vrijemeSadnje">Vrijeme sadnje:</label>
+            <input type="text" id="vrijemeSadnje" />
+          </div>
+          <div class="col-md-6">
+            <label for="cijenaSadnice">Cijena sadnice:</label>
+            <input type="number" id="cijenaSadnice" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-6">
+            <label for="napomena">Napomena:</label>
+            <input type="text" id="napomena" />
+          </div>
+          <div class="col-md-6">
+            <label for="ostaliDetalji">Ostali detalji:</label>
+            <input type="text" id="ostaliDetalji" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-6">
+            <input type="checkbox" id="slomljeneGrane" />
+            <label for="slomljeneGrane">Slomljene grane</label>
+          </div>
+          <div class="col-md-6">
+            <input type="checkbox" id="suveGrane" />
+            <label for="suveGrane ">Suve grane</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-6">
+            <input type="checkbox" id="suhovrhost" />
+            <label for="suhovrhost">Suhovrhost</label>
+          </div>
+          <div class="col-md-6">
+            <input type="checkbox" id="kvalitet" />
+            <label for="kvalitet">Za uklanjanje</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-6">
+            <input type="checkbox" id="isjeceneDebeleGrane" />
+            <label for="isjeceneDebeleGrane">Isječene debele grane</label>
+          </div>
+          <div class="col-md-6">
+            <input type="checkbox" id="premazivanjeNakonSjece" />
+            <label for="premazivanjeNakonSjece">Premazivanje sječe</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-6">
+            <input type="checkbox" id="isjecenoUklonjenoStablo" />
+            <label for="isjecenoUklonjenoStablo">Isječeno stablo</label>
+          </div>
+          <div class="col-md-6">
+            <input type="checkbox" id="pripadnostDrvoredu" />
+            <label for="pripadnostDrvoredu">Pripada drvoredu</label>
+          </div>
         </div>
         <div class="form-group">
           <button type="button" class="btn btn-primary" id="btnPretraga" onclick="pretraga()">Pretraga</button>
-          <button type="button" class="btn btn-danger" id="btnRestart" onclick="restartovanje()">Restart</button>
+          <button type="button" class="btn btn-danger" id="btnPonisti" onclick="restartovanje()">Poništi</button>
         </div>
         <div id="info"></div>
         <div id="layertree"></div>
         <div id="name"></div>
       </div>
-      <div class="col-md-10">
-        <div id="map" class="half-map"></div>
-        <div id="overlay" style="background-color: white; border-radius:10px; border: 1px solid black; padding: 5px 10px;"></div>
+      <div class="col-md-9">
+        <div id="map"></div>
+        <div id="overlay"></div>
+        <!--<div id="overlay" style="background-color: white; border-radius:10px; border: 1px solid black; padding: 5px 10px;"></div>-->
       </div>
     </div>
 
@@ -66,77 +198,56 @@
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
+      var urlOrigin = window.location.origin;
       var wmsUrl = "http://localhost:8088/geoserver/winsoft/wms";
+      var imageUrl = urlOrigin + "/assets/img/";
       var tiledRaster = new ol.layer.Tile({ source: new ol.source.OSM(), name: "Podloga" });
-      var fill = new ol.style.Fill({
-        color: "rgba(0,0,0,0.2)"
-      });
-      var stroke = new ol.style.Stroke({
-        color: "rgba(0,0,0,0.4)"
-      });
-      var circle = new ol.style.Circle({
-        radius: 6,
-        fill: fill,
-        stroke: stroke
-      });
-      var vectorStyle = new ol.style.Style({
-        fill: fill,
-        stroke: stroke,
-        image: circle
-      });
-      var defaultStyle = new ol.style.Style({
-        fill: fill,
-        stroke: stroke,
-        image: circle
-      });
+      var overlay = new ol.Overlay({ position: "bottom-center", element: document.querySelector("#overlay") });
 
-      var prva = [64, 196, 64, 0.5];
-      var druga = [108, 152, 64, 0.5];
-      var treca = [152, 108, 64, 0.5];
-      var cetvrta = [196, 32, 32, 0.5];
-      var peta = [164, 196, 164, 0.5];
-      var sesta = [108, 152, 164, 0.5];
-      var sedma = [152, 108, 164, 0.5];
-      var osma = [196, 132, 132, 0.5];
+      var idObjekta;
 
-      var klasaZemljista = {
-        1: prva,
-        2: druga,
-        3: treca,
-        4: cetvrta,
-        5: peta,
-        6: sesta,
-        7: sedma,
-        8: osma
-      };
+      function popuniKontrole(odgovor) {
+        var atributi = odgovor.features[0]["properties"];
+        idObjekta = odgovor.features[0]["id"];
+        document.querySelector("#latinskiNaziv").value = atributi["latinski_naziv"];
+        document.querySelector("#narodniNaziv").value = atributi["narodni_naziv"];
+        document.querySelector("#tip").value = atributi["tip"];
+        document.querySelector("#tipKragne").value = atributi["tip_kragne"];
+        document.querySelector("#visinaStabla").value = atributi["visina_stabla"];
+        document.querySelector("#visinaDebla").value = atributi["visina_debla"];
+        document.querySelector("#prsniPrecnik").value = atributi["prsni_precnik"];
+        document.querySelector("#sirinaKrosnje").value = atributi["sirina_krosnje"];
+        document.querySelector("#fitopatoloskePromjene").value = atributi["fitopatoloske_promjene"];
+        document.querySelector("#vrstaFitopatoloskePromjene").value = atributi["vrsta_fitopatoloske_promjene"];
+        document.querySelector("#entomoloskePromjene").value = atributi["entomoloske_promjene"];
+        document.querySelector("#vrstaEntomoloskePromjene").value = atributi["vrsta_entomoloske_promjene"];
+        document.querySelector("#izrazenostOtvoreneTruleziDebla").value = atributi["izrazenost_otvorene_trulezi_debla"];
+        document.querySelector("#velicinaOtvoreneTruleziDebla").value = atributi["velicina_otvorene_trulezi_debla"];
+        document.querySelector("#izrazenostOtvoreneTruleziGrana").value = atributi["izrazenost_otvorene_trulezi_grana"];
+        document.querySelector("#velicinaOtvoreneTruleziGrana").value = atributi["velicina_otvorene_trulezi_grana"];
+        document.querySelector("#ocjenaVitalnosti").value = atributi["ocjena_vitalnosti"];
+        document.querySelector("#ocjenaDekorativnosti").value = atributi["ocjena_dekorativnosti"];
+        document.querySelector("#starost").value = atributi["starost"];
+        document.querySelector("#ocekivanoTrajanjeZivota").value = atributi["ocekivano_trajanje_zivota"];
+        document.querySelector("#vrijemeSadnje").value = atributi["vrijeme_sadnje"];
+        document.querySelector("#cijenaSadnice").value = atributi["cijena_sadnice"];
+        document.querySelector("#napomena").value = atributi["napomena"];
+        document.querySelector("#ostaliDetalji").value = atributi["ostali_detalji"];
 
-      var styleCache = {};
-      function styleFunction(feature, resolution) {
-        var klasa = feature.get("klasazemlj");
-        if (!klasa || !klasaZemljista[klasa]) {
-          return [defaultStyle];
-        }
-        if (!styleCache[klasa]) {
-          styleCache[klasa] = new ol.style.Style({
-            fill: new ol.style.Fill({
-              color: klasaZemljista[klasa]
-            }),
-            stroke: defaultStyle.stroke,
-            image: new ol.style.Circle({
-              radius: 6,
-              fill: new ol.style.Fill({
-                color: klasaZemljista[klasa]
-              }),
-              stroke: stroke
-            })
-          });
-        }
-        return [styleCache[klasa]];
+        (atributi["slomljene_grane"] === true || atributi["slomljene_grane"] === "da") && (document.querySelector("#slomljeneGrane").checked = true);
+        (atributi["suve_grane"] === true || atributi["suve_grane"] === "da") && (document.querySelector("#suveGrane").checked = true);
+        (atributi["suhovrhost"] === true || atributi["suhovrhost"] === "da") && (document.querySelector("#suhovrhost").checked = true);
+        (atributi["isjecene_debele_grane"] === true || atributi["isjecene_debele_grane"] === "da") && (document.querySelector("#isjeceneDebeleGrane").checked = true);
+        (atributi["premazivanje_nakon_sjece"] === true || atributi["premazivanje_nakon_sjece"] === "da") && (document.querySelector("#premazivanjeNakonSjece").checked = true);
+        (atributi["kvalitet"] === true || atributi["kvalitet"] === "da") && (document.querySelector("#kvalitet").checked = true);
+        (atributi["isjeceno_uklonjeno_stablo"] === true || atributi["isjeceno_uklonjeno_stablo"] === "da") && (document.querySelector("#isjecenoUklonjenoStablo").checked = true);
+        (atributi["pripadnost_drvoredu"] === true || atributi["pripadnost_drvoredu"] === "da") && (document.querySelector("#pripadnostDrvoredu").checked = true);
+
+        //slika
+        var slika = atributi["url_fotografije"];
+        slika.length && (slika = slika.substring(slika.lastIndexOf("/") + 1, slika.length));
+        overlay.getElement().innerHTML = '<a target="_blank" href="' + imageUrl + slika + '"><img src="' + imageUrl + slika + '"></a>';
       }
-
-      $("#katastar").on("change", function() {
-        restartovanje();
-      });
 
       function pretraga() {
         var katastarskaOpstina = $("#katastar option:selected").val();
@@ -151,7 +262,7 @@
           new ol.source.TileWMS({
             url: wmsUrl,
             params: {
-              LAYERS: "winsoft:" + $("#katastar option:selected").val(),
+              LAYERS: "winsoft:drvece",
               cql_filter: atributPretrage + " = " + vrijednostPretrage
             },
             crossOrigin: "anonymous"
@@ -160,29 +271,46 @@
       }
 
       function restartovanje() {
-        rasterLayer.setSource(
-          new ol.source.TileWMS({
-            url: wmsUrl,
-            params: {
-              LAYERS: "winsoft:" + $("#katastar option:selected").val()
-            },
-            crossOrigin: "anonymous"
-          })
-        );
+        idObjekta = "";
+        document.querySelector("#latinskiNaziv").value = "";
+        document.querySelector("#narodniNaziv").value = "";
+        document.querySelector("#tip").value = "";
+        document.querySelector("#tipKragne").value = "";
+        document.querySelector("#visinaStabla").value = "";
+        document.querySelector("#visinaDebla").value = "";
+        document.querySelector("#prsniPrecnik").value = "";
+        document.querySelector("#sirinaKrosnje").value = "";
+        document.querySelector("#fitopatoloskePromjene").value = "";
+        document.querySelector("#vrstaFitopatoloskePromjene").value = "";
+        document.querySelector("#entomoloskePromjene").value = "";
+        document.querySelector("#vrstaEntomoloskePromjene").value = "";
+        document.querySelector("#izrazenostOtvoreneTruleziDebla").value = "";
+        document.querySelector("#velicinaOtvoreneTruleziDebla").value = "";
+        document.querySelector("#izrazenostOtvoreneTruleziGrana").value = "";
+        document.querySelector("#velicinaOtvoreneTruleziGrana").value = "";
+        document.querySelector("#ocjenaVitalnosti").value = "";
+        document.querySelector("#ocjenaDekorativnosti").value = "";
+        document.querySelector("#starost").value = "";
+        document.querySelector("#ocekivanoTrajanjeZivota").value = "";
+        document.querySelector("#vrijemeSadnje").value = "";
+        document.querySelector("#cijenaSadnice").value = "";
+        document.querySelector("#napomena").value = "";
+        document.querySelector("#ostaliDetalji").value = "";
+
+        /*document.querySelector("#slomljeneGrane").checked = false
+        document.querySelector("#suveGrane").checked = false
+        document.querySelector("#suhovrhost").checked = false
+        document.querySelector("#isjeceneDebeleGrane").checked = false
+        (atributi["premazivanje_nakon_sjece"] === true || atributi["premazivanje_nakon_sjece"] === "da") && (document.querySelector("#premazivanjeNakonSjece").checked = true);
+        (atributi["kvalitet"] === true || atributi["kvalitet"] === "da") && (document.querySelector("#kvalitet").checked = true);
+        (atributi["isjeceno_uklonjeno_stablo"] === true || atributi["isjeceno_uklonjeno_stablo"] === "da") && (document.querySelector("#isjecenoUklonjenoStablo").checked = true);
+        (atributi["pripadnost_drvoredu"] === true || atributi["pripadnost_drvoredu"] === "da") && (document.querySelector("#pripadnostDrvoredu").checked = true);
+*/
+        //slika
+        var slika = atributi["url_fotografije"];
+        slika.length && (slika = slika.substring(slika.lastIndexOf("/") + 1, slika.length));
+        overlay.getElement().innerHTML = '<a target="_blank" href="' + imageUrl + slika + '"><img src="' + imageUrl + slika + '"></a>';
       }
-
-      var prviSource = new ol.source.TileWMS({
-        url: wmsUrl,
-        params: { LAYERS: "winsoft:prostorni_registar" },
-        projection: "EPSG:3908",
-        crossOrigin: "anonymous"
-      });
-
-      var prvi_lejer = new ol.layer.Tile({
-        title: "PrviLejer",
-        name: "Prvi lejer name",
-        source: prviSource
-      });
 
       var rasterLayer = new ol.layer.Tile({
         title: "Raster lejer",
@@ -190,14 +318,11 @@
         source: new ol.source.TileWMS({
           url: wmsUrl,
           params: {
-            LAYERS: "winsoft:" + $("#katastar option:selected").val()
-            //,'cql_filter': "id=217"
+            LAYERS: "winsoft:drvece"
           },
           crossOrigin: "anonymous"
         })
       });
-
-      var overlay = new ol.Overlay({ position: "bottom-center", element: document.getElementById("overlay") });
 
       var center = ol.proj.transform([19.26, 42.443], "EPSG:4326", "EPSG:3857");
       var view = new ol.View({
@@ -248,8 +373,6 @@
       function onMouseClick(browserEvent) {
         var coordinate = browserEvent.coordinate;
         var pixel = map.getPixelFromCoordinate(coordinate);
-        var element = overlay.getElement();
-        element.innerHTML = "";
 
         var url = rasterLayer.getSource().getGetFeatureInfoUrl(browserEvent.coordinate, map.getView().getResolution(), "EPSG:3857", { INFO_FORMAT: "application/json" });
         if (url) {
@@ -260,24 +383,7 @@
             .then(function(json) {
               let odgovor = JSON.parse(json);
               if (odgovor.features.length > 0) {
-                var selektovano = odgovor.features[0]["properties"];
-                /*element.innerHTML += "Id: " + odgovor.features[0]["id"] + "<br>";
-                element.innerHTML += "Visina stabla: " + selektovano["visinastab"] + "<br>";
-                element.innerHTML += "Visina debla: " + selektovano["visinadebl"] + "<br>";
-                element.innerHTML += "Obim stabla: " + selektovano["obim"] + "<br>";
-                element.innerHTML += "Širina krošnje: " + selektovano["sirinakros"] + "<br>";
-                element.innerHTML += "Sječa debeli grana: " + selektovano["sjecadebel"] + "<br>";
-                element.innerHTML += "Premazivanje: " + selektovano["premazivan"] + "<br>";
-                element.innerHTML += "Tip: " + selektovano["tip"] + "<br>";
-                element.innerHTML += "Napomena: " + selektovano["napomena"] + "<br>";*/
-                //element.innerHTML += "Slika: " + selektovano["fileuri"] + "<br>";
-                element.innerHTML +=
-                  '<a target="_blank" href="' +
-                  "../assets/img/JPEG_20191001_084556_4536578329577545580.jpg" +
-                  '"><img src="' +
-                  "../assets/img/JPEG_20191001_084556_4536578329577545580.jpg" +
-                  '" alt="Forest"></a>' +
-                  "<br>";
+                popuniKontrole(odgovor);
               }
             });
         }
@@ -285,126 +391,6 @@
         overlay.setPosition(coordinate);
         map.addOverlay(overlay);
       }
-
-      //Dodavanje drveta lejera
-      // Name the root layer group
-      map.getLayerGroup().set("name", "Lejeri");
-
-      /**
-       * Build a tree layer from the map layers with visible and opacity
-       * options.
-       *
-       * @param {type} layer
-       * @returns {String}
-       */
-      function buildLayerTree(layer) {
-        var elem;
-        var name = layer.get("name") ? layer.get("name") : "Group";
-        var div =
-          "<li data-layerid='" + name + "'>" + "<span><i class='glyphicon glyphicon-file'></i> " + layer.get("name") + "</span>" + "<i class='glyphicon glyphicon-check'></i> ";
-        if (layer.getLayers) {
-          var sublayersElem = "";
-          var layers = layer.getLayers().getArray(),
-            len = layers.length;
-          for (var i = len - 1; i >= 0; i--) {
-            sublayersElem += buildLayerTree(layers[i]);
-          }
-          elem = div + " <ul>" + sublayersElem + "</ul></li>";
-        } else {
-          elem = div + " </li>";
-        }
-        return elem;
-      }
-
-      /**
-       * Initialize the tree from the map layers
-       * @returns {undefined}
-       */
-      function initializeTree() {
-        var elem = buildLayerTree(map.getLayerGroup());
-        $("#layertree")
-          .empty()
-          .append(elem);
-
-        $(".tree li:has(ul)")
-          .addClass("parent_li")
-          .find(" > span")
-          .attr("title", "Collapse this branch");
-        $(".tree li.parent_li > span").on("click", function(e) {
-          var children = $(this)
-            .parent("li.parent_li")
-            .find(" > ul > li");
-          if (children.is(":visible")) {
-            children.hide("fast");
-            $(this)
-              .attr("title", "Expand this branch")
-              .find(" > i")
-              .addClass("glyphicon-plus")
-              .removeClass("glyphicon-minus");
-          } else {
-            children.show("fast");
-            $(this)
-              .attr("title", "Collapse this branch")
-              .find(" > i")
-              .addClass("glyphicon-minus")
-              .removeClass("glyphicon-plus");
-          }
-          e.stopPropagation();
-        });
-      }
-
-      /**
-       * Finds recursively the layer with the specified key and value.
-       * @param {ol.layer.Base} layer
-       * @param {String} key
-       * @param {any} value
-       * @returns {ol.layer.Base}
-       */
-      function findBy(layer, key, value) {
-        if (layer.get(key) === value) {
-          return layer;
-        }
-
-        // Find recursively if it is a group
-        if (layer.getLayers) {
-          var layers = layer.getLayers().getArray(),
-            len = layers.length,
-            result;
-          for (var i = 0; i < len; i++) {
-            result = findBy(layers[i], key, value);
-            if (result) {
-              console.log(result);
-              return result;
-            }
-          }
-        }
-
-        return null;
-      }
-
-      $(document).ready(function() {
-        initializeTree();
-
-        // Handle visibility control
-        $("i").on("click", function() {
-          var layername = $(this)
-            .closest("li")
-            .data("layerid");
-          var layer = findBy(map.getLayerGroup(), "name", layername);
-
-          layer.setVisible(!layer.getVisible());
-
-          if (layer.getVisible()) {
-            $(this)
-              .removeClass("glyphicon-unchecked")
-              .addClass("glyphicon-check");
-          } else {
-            $(this)
-              .removeClass("glyphicon-check")
-              .addClass("glyphicon-unchecked");
-          }
-        });
-      });
     </script>
   </body>
 </html>
