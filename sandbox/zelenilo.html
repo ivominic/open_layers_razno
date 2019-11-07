@@ -177,8 +177,8 @@
           </div>
         </div>
         <div class="form-group">
-          <button type="button" class="btn btn-primary" id="btnPretraga" onclick="pretraga()">Pretraga</button>
           <button type="button" class="btn btn-danger" id="btnPonisti" onclick="restartovanje()">Poništi</button>
+          <button type="button" class="btn btn-primary" id="btnSacuvaj" onclick="sacuvaj()">Sačuvaj</button>
         </div>
         <div id="info"></div>
         <div id="layertree"></div>
@@ -186,8 +186,8 @@
       </div>
       <div class="col-md-9">
         <div id="map"></div>
-        <div id="overlay"></div>
-        <!--<div id="overlay" style="background-color: white; border-radius:10px; border: 1px solid black; padding: 5px 10px;"></div>-->
+
+        <div id="overlay" style="background-color: white; border-radius:10px; border: 1px solid black; padding: 5px 10px;"></div>
       </div>
     </div>
 
@@ -249,16 +249,64 @@
         overlay.getElement().innerHTML = '<a target="_blank" href="' + imageUrl + slika + '"><img src="' + imageUrl + slika + '"></a>';
       }
 
-      function pretraga() {
-        var katastarskaOpstina = $("#katastar option:selected").val();
-        var atributPretrage = $("#atribut option:selected").val();
-        var vrijednostPretrage = $("#vrijednost").val();
-        if (vrijednostPretrage.trim() === "") {
-          alert("Potrebno je unijeti vrijednost za pretragu.");
+      function sacuvaj() {
+        if (!idObjekta) {
+          alert("Potrebno je odabrati objekat za koji se unose podaci.");
           return false;
         }
+        $.ajax({
+          //url: '${createLink(controller:"plaza",action:"aktivnePlaze")}',
+          url: "http://localhost:8080/gispodgorica/drvece/sacuvaj",
+          //data: 'strana='+this.tekucaStrana+'&listovi='+JSON.stringify(this.listovi)+'&napopustu='+napopustu+'&nalageru='+nalageru+'&sort='+sort,
+          data: {
+            id: idObjekta,
+            latinskiNaziv: document.querySelector("#latinskiNaziv").value,
+            narodniNaziv: document.querySelector("#narodniNaziv").value,
+            tip: document.querySelector("#tip").value,
+            tipKragne: document.querySelector("#tipKragne").value,
+            visinaStabla: document.querySelector("#visinaStabla").value,
+            visinaDebla: document.querySelector("#visinaDebla").value,
+            prsniPrecnik: document.querySelector("#prsniPrecnik").value,
+            sirinaKrosnje: document.querySelector("#sirinaKrosnje").value,
+            fitopatoloskePromjene: document.querySelector("#fitopatoloskePromjene").value,
+            vrstaFitopatoloskePromjene: document.querySelector("#vrstaFitopatoloskePromjene").value,
+            entomoloskePromjene: document.querySelector("#entomoloskePromjene").value,
+            vrstaEntomoloskePromjene: document.querySelector("#vrstaEntomoloskePromjene").value,
+            izrazenostOtvoreneTruleziDebla: document.querySelector("#izrazenostOtvoreneTruleziDebla").value,
+            velicinaOtvoreneTruleziDebla: document.querySelector("#velicinaOtvoreneTruleziDebla").value,
+            izrazenostOtvoreneTruleziGrana: document.querySelector("#izrazenostOtvoreneTruleziGrana").value,
+            velicinaOtvoreneTruleziGrana: document.querySelector("#velicinaOtvoreneTruleziGrana").value,
+            ocjenaVitalnosti: document.querySelector("#ocjenaVitalnosti").value,
+            ocjenaDekorativnosti: document.querySelector("#ocjenaDekorativnosti").value,
+            starost: document.querySelector("#starost").value,
+            ocekivanoTrajanjeZivota: document.querySelector("#ocekivanoTrajanjeZivota").value,
+            vrijemeSadnje: document.querySelector("#vrijemeSadnje").value,
+            cijenaSadnice: document.querySelector("#cijenaSadnice").value,
+            napomena: document.querySelector("#napomena").value,
+            ostaliDetalji: document.querySelector("#ostaliDetalji").value,
+            slomljeneGrane: document.querySelector("#slomljeneGrane").checked,
+            suveGrane: document.querySelector("#suveGrane").checked,
+            suhovrhost: document.querySelector("#suhovrhost").checked,
+            isjeceneDebeleGrane: document.querySelector("#isjeceneDebeleGrane").checked,
+            premazivanjeNakonSjece: document.querySelector("#premazivanjeNakonSjece").checked,
+            kvalitet: document.querySelector("#kvalitet").checked,
+            isjecenoUklonjenoStablo: document.querySelector("#isjecenoUklonjenoStablo").checked,
+            pripadnostDrvoredu: document.querySelector("#pripadnostDrvoredu").checked
+          },
+          type: "POST",
+          timeout: 10000,
+          dataType: "json",
+          async: false,
+          error: function(success) {
+            alert("Greška prilikom unosa podataka: \n" + xhr.responseText);
+          },
+          success: function(success) {
+            alert("Uspjeh");
+            restartovanje();
+          }
+        });
 
-        rasterLayer.setSource(
+        /*rasterLayer.setSource(
           new ol.source.TileWMS({
             url: wmsUrl,
             params: {
@@ -267,7 +315,7 @@
             },
             crossOrigin: "anonymous"
           })
-        );
+        );*/
       }
 
       function restartovanje() {
@@ -296,20 +344,16 @@
         document.querySelector("#cijenaSadnice").value = "";
         document.querySelector("#napomena").value = "";
         document.querySelector("#ostaliDetalji").value = "";
+        document.querySelector("#slomljeneGrane").checked = false;
+        document.querySelector("#suveGrane").checked = false;
+        document.querySelector("#suhovrhost").checked = false;
+        document.querySelector("#isjeceneDebeleGrane").checked = false;
+        document.querySelector("#premazivanjeNakonSjece").checked = false;
+        document.querySelector("#kvalitet").checked = false;
+        document.querySelector("#isjecenoUklonjenoStablo").checked = false;
+        document.querySelector("#pripadnostDrvoredu").checked = false;
 
-        /*document.querySelector("#slomljeneGrane").checked = false
-        document.querySelector("#suveGrane").checked = false
-        document.querySelector("#suhovrhost").checked = false
-        document.querySelector("#isjeceneDebeleGrane").checked = false
-        (atributi["premazivanje_nakon_sjece"] === true || atributi["premazivanje_nakon_sjece"] === "da") && (document.querySelector("#premazivanjeNakonSjece").checked = true);
-        (atributi["kvalitet"] === true || atributi["kvalitet"] === "da") && (document.querySelector("#kvalitet").checked = true);
-        (atributi["isjeceno_uklonjeno_stablo"] === true || atributi["isjeceno_uklonjeno_stablo"] === "da") && (document.querySelector("#isjecenoUklonjenoStablo").checked = true);
-        (atributi["pripadnost_drvoredu"] === true || atributi["pripadnost_drvoredu"] === "da") && (document.querySelector("#pripadnostDrvoredu").checked = true);
-*/
-        //slika
-        var slika = atributi["url_fotografije"];
-        slika.length && (slika = slika.substring(slika.lastIndexOf("/") + 1, slika.length));
-        overlay.getElement().innerHTML = '<a target="_blank" href="' + imageUrl + slika + '"><img src="' + imageUrl + slika + '"></a>';
+        overlay.getElement().innerHTML = "";
       }
 
       var rasterLayer = new ol.layer.Tile({
@@ -378,6 +422,7 @@
         if (url) {
           fetch(url)
             .then(function(response) {
+              restartovanje();
               return response.text();
             })
             .then(function(json) {

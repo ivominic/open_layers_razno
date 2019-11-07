@@ -9,8 +9,14 @@ img {
   border-radius: 4px;
   padding: 5px;
   width: 550px;
+  /*transform: rotate(90deg);*/
+}
+
+#overlay {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
   transform: rotate(90deg);
-  opacity: 1 !important;
 }
 
 /*img:hover {
