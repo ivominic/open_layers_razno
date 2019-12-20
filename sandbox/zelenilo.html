@@ -112,7 +112,7 @@
             <input type="number" id="starost" />
           </div>
           <div class="col-md-6">
-            <label for="ocekivanoTrajanjeZivota ">Vijek trajanja (godina):</label>
+            <label for="ocekivanoTrajanjeZivota">Vijek trajanja (godina):</label>
             <input type="number" id="ocekivanoTrajanjeZivota" />
           </div>
         </div>
@@ -143,7 +143,7 @@
           </div>
           <div class="col-md-6">
             <input type="checkbox" id="suveGrane" />
-            <label for="suveGrane ">Suve grane</label>
+            <label for="suveGrane">Suve grane</label>
           </div>
         </div>
         <div class="form-group">
@@ -249,7 +249,15 @@
         overlay.getElement().innerHTML = '<a target="_blank" href="' + imageUrl + slika + '"><img src="' + imageUrl + slika + '"></a>';
       }
 
+      //Da na ENTER ima istu funkcionalnost kao na save
+      $(document).keypress(function(event) {
+        if (event.which === 13) {
+          sacuvaj();
+        }
+      });
+
       function sacuvaj() {
+        alert(document.querySelector("#pripadnostDrvoredu").checked);
         if (!idObjekta) {
           alert("Potrebno je odabrati objekat za koji se unose podaci.");
           return false;
