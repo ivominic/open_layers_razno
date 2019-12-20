@@ -71,6 +71,7 @@
             LAYERS: "winsoft:drvece",
             TILED: false
           },
+          serverType: "geoserver",
           crossOrigin: "anonymous"
         })
       });
@@ -84,6 +85,7 @@
             LAYERS: "winsoft:zbunje",
             TILED: false
           },
+          serverType: "geoserver",
           crossOrigin: "anonymous"
         })
       });
@@ -97,6 +99,7 @@
             LAYERS: "winsoft:urbani_mobilijar",
             TILED: false
           },
+          serverType: "geoserver",
           crossOrigin: "anonymous"
         })
       });
@@ -110,6 +113,7 @@
             LAYERS: "winsoft:zelene_povrsine",
             TILED: false
           },
+          serverType: "geoserver",
           crossOrigin: "anonymous"
         })
       });
@@ -123,6 +127,7 @@
             LAYERS: "winsoft:rekreativne_povrsine",
             TILED: false
           },
+          serverType: "geoserver",
           crossOrigin: "anonymous"
         })
       });
@@ -236,10 +241,19 @@
         var coordinate = browserEvent.coordinate;
         var pixel = map.getPixelFromCoordinate(coordinate);
 
-        map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+        map.forEachLayerAtPixel(pixel, function(layer) {
+          console.log(pixel);
+          console.log(layer);
+          var title = layer.get("title");
+          console.log(title);
+        });
+
+        /*map.forEachFeatureAtPixel(pixel, function(feature, layer) {
           var idLayer = layer.get("myLayerID");
           console.log("lejer", idLayer);
-        });
+        });*/
+
+        console.log("radi");
 
         var url = drveceLejer.getSource().getGetFeatureInfoUrl(browserEvent.coordinate, map.getView().getResolution(), "EPSG:3857", { INFO_FORMAT: "application/json" });
         if (url) {
@@ -255,6 +269,8 @@
               }
             });
         }
+
+        console.log("radi dalje");
 
         overlay.setPosition(coordinate);
         map.addOverlay(overlay);
