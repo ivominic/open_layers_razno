@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Katastarske parcele u slivu Morače</title>
+  <title>Katastar zelenila</title>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/ol3/css/ol.css" type="text/css" />
   <link rel="stylesheet" href="../assets/ol3/css/ol3-layerswitcher.css" type="text/css" />
   <link rel="stylesheet" href="../assets/css/samples.css" type="text/css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../assets/ol3/css/ol3-sidebar.css" type="text/css" />
 </head>
 <html>
   <body>
@@ -21,6 +23,78 @@
       <div id="overlay" style="background-color: white; border-radius:10px; border: 1px solid black; padding: 5px 10px;"></div>
     </div>
 
+    <div id="sidebar" class="sidebar collapsed">
+      <!-- Nav tabs -->
+      <div class="sidebar-tabs">
+        <ul role="tablist">
+          <li>
+            <a href="#filter" role="tab"><i class="fa fa-bars"></i></a>
+          </li>
+          <li>
+            <a href="#podaci" role="tab"><i class="fa fa-globe"></i></a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Tab panes -->
+      <div class="sidebar-content">
+        <div class="sidebar-pane" id="filter">
+          <h1 class="sidebar-header">
+            Filter
+            <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+          </h1>
+          <div>
+            <label for="ddlLejer">Odaberite lejer:</label><br />
+            <select id="ddlLejer" class="form-control">
+              <option value="winsoft:drvece">Drveće</option>
+              <option value="winsoft:zbunje">Žbunje</option>
+              <option value="winsoft:zelene_povrsine">Zelene površine</option>
+              <option value="winsoft:rekreativne_povrsine">Rekreativne površine</option>
+              <option value="winsoft:urbani_mobilijar">Urbani mobilijar</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="atribut">Odaberite atribut pretrage:</label>
+            <select class="form-control" id="atribut">
+              <option value="name">Name</option>
+              <option value="description">Description</option>
+            </select>
+          </div>
+          <div class="form-group input-group">
+            <input type="text" class="form-control" id="vrijednost" placeholder="Vrijednost atributa pretrage" />
+            <div class="input-group-append">
+              <button type="button" class="btn btn-info" id="btnAtribut">
+                Dodaj atribut
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <button type="button" class="btn btn-success" id="btnPretraga">Pretraga</button>
+            <button type="button" class="btn btn-danger" id="btnRestart">Restart</button>
+            <button type="button" class="btn btn-info" id="btnKopiranjeLinka">Link</button>
+
+            <table id="tblAtributi" class=" table order-list table-responsive">
+              <thead>
+                <tr>
+                  <th>Lejer</th>
+                  <th>Atribut</th>
+                  <th>Vrijednost</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="sidebar-pane" id="podaci">
+          <h1 class="sidebar-header">
+            Podaci<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+          </h1>
+        </div>
+      </div>
+    </div>
+
     <!--<script src="../assets/ol3/js/ol.js"></script>-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.6.0/ol.js"></script>
     <!--<script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0/build/ol.js"></script>-->
@@ -28,6 +102,7 @@
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="../assets/ol3/js/ol3-layerswitcher.js"></script>
+    <script src="../assets/ol3/js/ol3-sidebar.js"></script>
     <script>
       //var urlOrigin = window.location.origin;
       var urlOrigin = "http://localhost:8088/";
@@ -172,13 +247,14 @@
                 type: "base",
                 visible: true,
                 source: new ol.source.XYZ({
-                  url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+                  url:
+                    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}" /*,
                   attributions: [
                     new ol.Attribution({
                       html:
                         "Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012"
                     })
-                  ]
+                  ]*/
                 })
               }),
               new ol.layer.Tile({
@@ -204,6 +280,10 @@
       map.addControl(layerSwitcher);
 
       map.on("pointermove", onMouseMove);
+
+      $("#btnAtribut").on("click", function() {
+        dodajAtribut();
+      });
 
       function onMouseMove(browserEvent) {
         var coordinate = browserEvent.coordinate;
@@ -233,6 +313,9 @@
         view.fitExtent(vectorSource.getExtent(), map.getSize());
       });
       map.addInteraction(dragAndDrop);
+
+      var sidebar = new ol.control.Sidebar({ element: "sidebar", position: "left" });
+      map.addControl(sidebar);
 
       //Klik na feature
       map.on("click", onMouseClick);
@@ -274,6 +357,58 @@
 
         overlay.setPosition(coordinate);
         map.addOverlay(overlay);
+      }
+
+      /**
+       * Dodaje atribute za CQL upit
+       */
+      function dodajAtribut() {
+        console.log("asdasdasd");
+        var atributNaziv = $("#atribut option:selected").text();
+        var atributValue = $("#atribut option:selected").val();
+        var lejerNaziv = $("#ddlLejer option:selected").text();
+        var lejerValue = $("#ddlLejer option:selected").val();
+        var vrijednost = $("#vrijednost").val();
+
+        if (vrijednost.trim() === "" || typeof vrijednost === undefined) {
+          alert("Potrebno je unijeti vrijednost atributa");
+        } else {
+          AddAttribute(lejerNaziv, lejerValue, atributNaziv, atributValue, vrijednost);
+        }
+      }
+
+      function AddAttribute(lejerNaziv, lejerValue, atributNaziv, atributValue, vrijednost) {
+        var tBody = $("#tblAtributi > TBODY")[0];
+
+        var noviAtribut = true;
+        $("#tblAtributi tr").each(function(i, row) {
+          if (i > 0) {
+            if (row.cells[0].innerHTML == lejerNaziv && row.cells[1].innerHTML == atributValue) {
+              row.cells[2].innerHTML = row.cells[2].innerHTML + ";" + vrijednost;
+              noviAtribut = false;
+            }
+          }
+        });
+
+        if (noviAtribut) {
+          row = tBody.insertRow(-1);
+
+          var cell = $(row.insertCell(-1));
+          cell.html(lejerNaziv);
+          cell = $(row.insertCell(-1));
+          cell.html(atributValue);
+          cell = $(row.insertCell(-1));
+          cell.html(vrijednost);
+
+          cell = $(row.insertCell(-1));
+          var btnRemove = $("<input />");
+          btnRemove.attr("type", "button");
+          btnRemove.attr("class", "btn btn-danger btn-sm");
+          //btnRemove.attr("onclick", "RemoveAttribute(this);");
+          btnRemove.val("X");
+          cell.append(btnRemove);
+          dodajClickEventRemoveDugmetu(btnRemove);
+        }
       }
     </script>
   </body>
