@@ -46,19 +46,16 @@
           <div>
             <label for="ddlLejer">Odaberite lejer:</label><br />
             <select id="ddlLejer" class="form-control">
-              <option value="winsoft:drvece">Drveće</option>
-              <option value="winsoft:zbunje">Žbunje</option>
-              <option value="winsoft:zelene_povrsine">Zelene površine</option>
-              <option value="winsoft:rekreativne_povrsine">Rekreativne površine</option>
-              <option value="winsoft:urbani_mobilijar">Urbani mobilijar</option>
+              <option value="drvece">Drveće</option>
+              <option value="zbunje">Žbunje</option>
+              <option value="zelene_povrsine">Zelene površine</option>
+              <option value="rekreativne_povrsine">Rekreativne površine</option>
+              <option value="urbani_mobilijar">Urbani mobilijar</option>
             </select>
           </div>
           <div class="form-group">
             <label for="atribut">Odaberite atribut pretrage:</label>
-            <select class="form-control" id="atribut">
-              <option value="name">Name</option>
-              <option value="description">Description</option>
-            </select>
+            <select class="form-control" id="atribut"> </select>
           </div>
           <div class="form-group input-group">
             <input type="text" class="form-control" id="vrijednost" placeholder="Vrijednost atributa pretrage" />
@@ -114,9 +111,13 @@
 
       var idObjekta;
 
-      function popuniKontrole(odgovor) {
+      popuniDdlAtributa();
+
+      function popuniKontrole(lejer, odgovor) {
         var atributi = odgovor.features[0]["properties"];
         idObjekta = odgovor.features[0]["id"];
+
+        console.log(lejer, odgovor);
 
         //slika
         var slika = atributi["url_fotografije"];
@@ -249,12 +250,12 @@
                 source: new ol.source.XYZ({
                   url:
                     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}" /*,
-                  attributions: [
-                    new ol.Attribution({
-                      html:
-                        "Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012"
-                    })
-                  ]*/
+                        attributions: [
+                          new ol.Attribution({
+                            html:
+                              "Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012"
+                          })
+                        ]*/
                 })
               }),
               new ol.layer.Tile({
@@ -289,10 +290,10 @@
         var coordinate = browserEvent.coordinate;
         var pixel = map.getPixelFromCoordinate(coordinate);
         /*var el = document.getElementById("name");
-                      el.innerHTML = "";
-                      map.forEachFeatureAtPixel(pixel, function(feature) {
-                        el.innerHTML += feature.get("broj") + "<br>";
-                      });*/
+                            el.innerHTML = "";
+                            map.forEachFeatureAtPixel(pixel, function(feature) {
+                              el.innerHTML += feature.get("broj") + "<br>";
+                            });*/
       }
 
       var dragAndDrop = new ol.interaction.DragAndDrop({
@@ -323,40 +324,166 @@
       function onMouseClick(browserEvent) {
         var coordinate = browserEvent.coordinate;
         var pixel = map.getPixelFromCoordinate(coordinate);
+        restartovanje();
 
-        map.forEachLayerAtPixel(pixel, function(layer) {
-          console.log(pixel);
-          console.log(layer);
-          var title = layer.get("title");
-          console.log(title);
-        });
+        /*map.forEachLayerAtPixel(pixel, function(layer) {
+                console.log(pixel);
+                console.log(layer);
+                var title = layer.get("title");
+                console.log(title);
+              });*/
 
         /*map.forEachFeatureAtPixel(pixel, function(feature, layer) {
-          var idLayer = layer.get("myLayerID");
-          console.log("lejer", idLayer);
-        });*/
+                var idLayer = layer.get("myLayerID");
+                console.log("lejer", idLayer);
+              });*/
 
-        console.log("radi");
-
-        var url = drveceLejer.getSource().getGetFeatureInfoUrl(browserEvent.coordinate, map.getView().getResolution(), "EPSG:3857", { INFO_FORMAT: "application/json" });
-        if (url) {
-          fetch(url)
+        var urlDrvece = drveceLejer.getSource().getGetFeatureInfoUrl(coordinate, map.getView().getResolution(), "EPSG:3857", { INFO_FORMAT: "application/json" });
+        if (urlDrvece) {
+          fetch(urlDrvece)
             .then(function(response) {
-              restartovanje();
+              //restartovanje();
               return response.text();
             })
             .then(function(json) {
               let odgovor = JSON.parse(json);
               if (odgovor.features.length > 0) {
-                popuniKontrole(odgovor);
+                //console.log("drvece", odgovor);
+                popuniKontrole("drvece", odgovor);
               }
             });
         }
 
-        console.log("radi dalje");
+        var urlZbunje = zbunjeLejer.getSource().getGetFeatureInfoUrl(coordinate, map.getView().getResolution(), "EPSG:3857", { INFO_FORMAT: "application/json" });
+        if (urlZbunje) {
+          fetch(urlZbunje)
+            .then(function(response) {
+              //restartovanje();
+              return response.text();
+            })
+            .then(function(json) {
+              let odgovor = JSON.parse(json);
+              if (odgovor.features.length > 0) {
+                //console.log("zbunje", odgovor);
+                popuniKontrole("zbunje", odgovor);
+              }
+            });
+        }
+
+        var urlUrbaniMobilijar = urbaniMobilijarLejer.getSource().getGetFeatureInfoUrl(coordinate, map.getView().getResolution(), "EPSG:3857", { INFO_FORMAT: "application/json" });
+        if (urlUrbaniMobilijar) {
+          fetch(urlUrbaniMobilijar)
+            .then(function(response) {
+              //restartovanje();
+              return response.text();
+            })
+            .then(function(json) {
+              let odgovor = JSON.parse(json);
+              if (odgovor.features.length > 0) {
+                //console.log("urbani mobilijar", odgovor);
+                popuniKontrole("urbani mobilijar", odgovor);
+              }
+            });
+        }
+
+        var urlZelenePovrsine = zelenePovrsineLejer.getSource().getGetFeatureInfoUrl(coordinate, map.getView().getResolution(), "EPSG:3857", { INFO_FORMAT: "application/json" });
+        if (urlZelenePovrsine) {
+          fetch(urlZelenePovrsine)
+            .then(function(response) {
+              //restartovanje();
+              return response.text();
+            })
+            .then(function(json) {
+              let odgovor = JSON.parse(json);
+              if (odgovor.features.length > 0) {
+                //console.log("zelene povrsine", odgovor);
+                popuniKontrole("zelene povrsine", odgovor);
+              }
+            });
+        }
+
+        var urlRekreativnePovrsine = rekreativnePovrsineLejer
+          .getSource()
+          .getGetFeatureInfoUrl(coordinate, map.getView().getResolution(), "EPSG:3857", { INFO_FORMAT: "application/json" });
+        if (urlRekreativnePovrsine) {
+          fetch(urlRekreativnePovrsine)
+            .then(function(response) {
+              //restartovanje();
+              return response.text();
+            })
+            .then(function(json) {
+              let odgovor = JSON.parse(json);
+              if (odgovor.features.length > 0) {
+                //console.log("rekreativne povrsine", odgovor);
+                popuniKontrole("rekreativne povrsine", odgovor);
+              }
+            });
+        }
 
         overlay.setPosition(coordinate);
         map.addOverlay(overlay);
+      }
+
+      $("#ddlLejer").on("change", function() {
+        popuniDdlAtributa();
+      });
+
+      /**
+       * Popunjava drop down listu atributima u zavisnosti od odabranog lejera.
+       */
+      function popuniDdlAtributa() {
+        $("#atribut").empty();
+        var objekat = $("#ddlLejer option:selected").val();
+
+        var atributi = {
+          drvece: [
+            "narodni_naziv",
+            "latinski_naziv",
+            "tip",
+            "tip_kragne",
+            "kvalitet",
+            "napomena",
+            "ostali_detalji",
+            "prsni_precnik",
+            "sirina_krosnje",
+            "visina_debla",
+            "visina_stabla",
+            "vrijeme_sadnje",
+            "starost",
+            "pripadnost_drvoredu",
+            "ocekivano_trajanje_zivota",
+            "ocjena_dekorativnosti",
+            "ocjena_vitalnosti",
+            "cijena_sadnice",
+            "entomoloske_promjene",
+            "fitopatoloske_promjene",
+            "vrsta_entomoloske_promjene",
+            "vrsta_fitopatoloske_promjene",
+            "isjeceno_uklonjeno_stablo",
+            "isjecene_debele_grane",
+            "premazivanje_nakon_sjece",
+            "slomljene_grane",
+            "suhovrhost",
+            "suve_grane",
+            "izrazenost_otvorene_trulezi_debla",
+            "izrazenost_otvorene_trulezi_grana",
+            "velicina_otvorene_trulezi_debla",
+            "velicina_otvorene_trulezi_grana"
+          ],
+          zbunje: ["latinski_naziv", "narodni_naziv", "tip", "zdravstveno_stanje", "napomena"],
+          zelene_povrsine: ["namjena", "opis", "tip"],
+          rekreativne_povrsine: ["boja", "dimenzije", "materijal", "napomena", "stanje", "tip"],
+          urbani_mobilijar: ["boja", "materijal", "napomena", "stanje", "tip"]
+        };
+
+        atributi[objekat].forEach(item =>
+          $("#atribut").append(
+            $("<option>", {
+              value: item,
+              text: item
+            })
+          )
+        );
       }
 
       /**
