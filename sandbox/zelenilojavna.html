@@ -18,6 +18,8 @@
     </div>
     <div class="row"></div>
     <div class="row">
+      <!-- Zemljotres -->
+      <!--<div id="map" style="width: 98%; height: 98%;"></div>-->
       <div id="map"></div>
 
       <div id="overlay" style="background-color: white; border-radius:10px; border: 1px solid black; padding: 5px 10px;"></div>
@@ -68,7 +70,6 @@
           <div class="form-group">
             <button type="button" class="btn btn-success" id="btnPretraga">Pretraga</button>
             <button type="button" class="btn btn-danger" id="btnRestart">Restart</button>
-            <button type="button" class="btn btn-info" id="btnKopiranjeLinka">Link</button>
 
             <table id="tblAtributi" class=" table order-list table-responsive">
               <thead>
@@ -105,11 +106,57 @@
       var urlOrigin = "http://localhost:8088/";
       var wmsUrl = "http://localhost:8088/geoserver/winsoft/wms";
       var imageUrl = urlOrigin + "slike/";
-      var osmPodloga = new ol.layer.Tile({ source: new ol.source.OSM(), name: "Podloga" });
       var overlay = new ol.Overlay({ position: "bottom-center", element: document.querySelector("#overlay") });
-      var esri = new ol.layer.Tile("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}");
+      var cqlLejer = {
+        drvece: "",
+        zbunje: "",
+        zelene_povrsine: "",
+        rekreativne_povrsine: "",
+        urbani_mobilijar: ""
+      };
 
-      var idObjekta;
+      var atributi = {
+        drvece: [
+          "narodni_naziv",
+          "latinski_naziv",
+          "tip",
+          "tip_kragne",
+          "kvalitet",
+          "napomena",
+          "ostali_detalji",
+          "prsni_precnik",
+          "sirina_krosnje",
+          "visina_debla",
+          "visina_stabla",
+          "vrijeme_sadnje",
+          "starost",
+          "pripadnost_drvoredu",
+          "ocekivano_trajanje_zivota",
+          "ocjena_dekorativnosti",
+          "ocjena_vitalnosti",
+          "cijena_sadnice",
+          "entomoloske_promjene",
+          "fitopatoloske_promjene",
+          "vrsta_entomoloske_promjene",
+          "vrsta_fitopatoloske_promjene",
+          "isjeceno_uklonjeno_stablo",
+          "isjecene_debele_grane",
+          "premazivanje_nakon_sjece",
+          "slomljene_grane",
+          "suhovrhost",
+          "suve_grane",
+          "izrazenost_otvorene_trulezi_debla",
+          "izrazenost_otvorene_trulezi_grana",
+          "velicina_otvorene_trulezi_debla",
+          "velicina_otvorene_trulezi_grana"
+        ],
+        zbunje: ["latinski_naziv", "narodni_naziv", "tip", "zdravstveno_stanje", "napomena"],
+        zelene_povrsine: ["namjena", "opis", "tip"],
+        rekreativne_povrsine: ["boja", "dimenzije", "materijal", "napomena", "stanje", "tip"],
+        urbani_mobilijar: ["boja", "materijal", "napomena", "stanje", "tip"]
+      };
+
+      var idObjekta, temp_poligon, cql_text;
 
       popuniDdlAtributa();
 
@@ -117,7 +164,7 @@
         var atributi = odgovor.features[0]["properties"];
         idObjekta = odgovor.features[0]["id"];
 
-        console.log(lejer, odgovor);
+        //console.log(lejer, odgovor);
 
         //slika
         var slika = atributi["url_fotografije"];
@@ -140,7 +187,7 @@
 
       var drveceLejer = new ol.layer.Tile({
         title: "Drveće",
-        name: "Drvece",
+        name: "drvece",
         source: new ol.source.TileWMS({
           url: wmsUrl,
           params: {
@@ -154,7 +201,7 @@
 
       var zbunjeLejer = new ol.layer.Tile({
         title: "Žbunje",
-        name: "Zbunje",
+        name: "zbunje",
         source: new ol.source.TileWMS({
           url: wmsUrl,
           params: {
@@ -168,7 +215,7 @@
 
       var urbaniMobilijarLejer = new ol.layer.Tile({
         title: "Urbani mobilijar",
-        name: "UrbaniMobilijar",
+        name: "urbani_mobilijar",
         source: new ol.source.TileWMS({
           url: wmsUrl,
           params: {
@@ -182,7 +229,7 @@
 
       var zelenePovrsineLejer = new ol.layer.Tile({
         title: "Zelene povrišine",
-        name: "ZelenePovrsine",
+        name: "zelene_povrsine",
         source: new ol.source.TileWMS({
           url: wmsUrl,
           params: {
@@ -196,7 +243,7 @@
 
       var rekreativnePovrsineLejer = new ol.layer.Tile({
         title: "Rekreativne povrišine",
-        name: "RekreativnePovrsine",
+        name: "rekreativne_povrsine",
         source: new ol.source.TileWMS({
           url: wmsUrl,
           params: {
@@ -285,6 +332,25 @@
       $("#btnAtribut").on("click", function() {
         dodajAtribut();
       });
+      $("#btnPretraga").on("click", function() {
+        pretraga();
+      });
+
+      function pretraga() {
+        cql_text = "";
+
+        restartovanje();
+        poligonCQL();
+        atributCQL();
+
+        map.getLayers().forEach(function(layer) {
+          if (layer instanceof ol.layer.Group && layer.q.title === "Podaci") {
+            layer.getLayers().forEach(function(groupLayer) {
+              cqlLejer[groupLayer.q.name].length > 5 && groupLayer.getSource().updateParams({ cql_filter: cqlLejer[groupLayer.q.name] });
+            });
+          }
+        });
+      }
 
       function onMouseMove(browserEvent) {
         var coordinate = browserEvent.coordinate;
@@ -348,7 +414,6 @@
             .then(function(json) {
               let odgovor = JSON.parse(json);
               if (odgovor.features.length > 0) {
-                //console.log("drvece", odgovor);
                 popuniKontrole("drvece", odgovor);
               }
             });
@@ -364,7 +429,6 @@
             .then(function(json) {
               let odgovor = JSON.parse(json);
               if (odgovor.features.length > 0) {
-                //console.log("zbunje", odgovor);
                 popuniKontrole("zbunje", odgovor);
               }
             });
@@ -380,7 +444,6 @@
             .then(function(json) {
               let odgovor = JSON.parse(json);
               if (odgovor.features.length > 0) {
-                //console.log("urbani mobilijar", odgovor);
                 popuniKontrole("urbani mobilijar", odgovor);
               }
             });
@@ -396,7 +459,6 @@
             .then(function(json) {
               let odgovor = JSON.parse(json);
               if (odgovor.features.length > 0) {
-                //console.log("zelene povrsine", odgovor);
                 popuniKontrole("zelene povrsine", odgovor);
               }
             });
@@ -414,7 +476,6 @@
             .then(function(json) {
               let odgovor = JSON.parse(json);
               if (odgovor.features.length > 0) {
-                //console.log("rekreativne povrsine", odgovor);
                 popuniKontrole("rekreativne povrsine", odgovor);
               }
             });
@@ -434,47 +495,6 @@
       function popuniDdlAtributa() {
         $("#atribut").empty();
         var objekat = $("#ddlLejer option:selected").val();
-
-        var atributi = {
-          drvece: [
-            "narodni_naziv",
-            "latinski_naziv",
-            "tip",
-            "tip_kragne",
-            "kvalitet",
-            "napomena",
-            "ostali_detalji",
-            "prsni_precnik",
-            "sirina_krosnje",
-            "visina_debla",
-            "visina_stabla",
-            "vrijeme_sadnje",
-            "starost",
-            "pripadnost_drvoredu",
-            "ocekivano_trajanje_zivota",
-            "ocjena_dekorativnosti",
-            "ocjena_vitalnosti",
-            "cijena_sadnice",
-            "entomoloske_promjene",
-            "fitopatoloske_promjene",
-            "vrsta_entomoloske_promjene",
-            "vrsta_fitopatoloske_promjene",
-            "isjeceno_uklonjeno_stablo",
-            "isjecene_debele_grane",
-            "premazivanje_nakon_sjece",
-            "slomljene_grane",
-            "suhovrhost",
-            "suve_grane",
-            "izrazenost_otvorene_trulezi_debla",
-            "izrazenost_otvorene_trulezi_grana",
-            "velicina_otvorene_trulezi_debla",
-            "velicina_otvorene_trulezi_grana"
-          ],
-          zbunje: ["latinski_naziv", "narodni_naziv", "tip", "zdravstveno_stanje", "napomena"],
-          zelene_povrsine: ["namjena", "opis", "tip"],
-          rekreativne_povrsine: ["boja", "dimenzije", "materijal", "napomena", "stanje", "tip"],
-          urbani_mobilijar: ["boja", "materijal", "napomena", "stanje", "tip"]
-        };
 
         atributi[objekat].forEach(item =>
           $("#atribut").append(
@@ -509,7 +529,8 @@
         var noviAtribut = true;
         $("#tblAtributi tr").each(function(i, row) {
           if (i > 0) {
-            if (row.cells[0].innerHTML == lejerNaziv && row.cells[1].innerHTML == atributValue) {
+            if (row.cells[0].innerHTML == lejerValue && row.cells[1].innerHTML == atributValue) {
+              //if (row.cells[0].innerHTML == lejerNaziv && row.cells[1].innerHTML == atributValue) {
               row.cells[2].innerHTML = row.cells[2].innerHTML + ";" + vrijednost;
               noviAtribut = false;
             }
@@ -520,7 +541,8 @@
           row = tBody.insertRow(-1);
 
           var cell = $(row.insertCell(-1));
-          cell.html(lejerNaziv);
+          //cell.html(lejerNaziv);
+          cell.html(lejerValue);
           cell = $(row.insertCell(-1));
           cell.html(atributValue);
           cell = $(row.insertCell(-1));
@@ -535,6 +557,45 @@
           cell.append(btnRemove);
           dodajClickEventRemoveDugmetu(btnRemove);
         }
+      }
+
+      function RemoveAttribute(button) {
+        var row = $(button).closest("TR");
+        var name = $("TD", row)
+          .eq(0)
+          .html();
+        var table = $("#tblAtributi")[0];
+        table.deleteRow(row[0].rowIndex);
+      }
+
+      function dodajClickEventRemoveDugmetu(btn) {
+        //Pošto u CEDIS-u ne radi standardan način
+        var dugmad = document.querySelectorAll(".btn-sm");
+        var last = dugmad[dugmad.length - 1];
+        last.addEventListener("click", function() {
+          RemoveAttribute(last);
+        });
+      }
+
+      /**
+       * @return {string} Kreira CQL upit za svaki od lejera koji su unešeni u tabelu.
+       */
+      function atributCQL() {
+        $("#tblAtributi tr").each(function(i, row) {
+          if (i > 0) {
+            cqlLejer[row.cells[0].innerHTML] !== "" && cqlLejer[row.cells[0].innerHTML] !== undefined && (cqlLejer[row.cells[0].innerHTML] += " AND ");
+            var formatiraniAtribut = String("(" + row.cells[1].innerHTML + " ILIKE '%" + row.cells[2].innerHTML + "%')");
+            cqlLejer[row.cells[0].innerHTML] += formatiraniAtribut.replace(/;/g, "%' OR " + row.cells[1].innerHTML + " ILIKE '%");
+          }
+        });
+      }
+
+      /**
+       * @return {string} Kreira CQL upit za prikaz samo onih objekata koji se nalaze u iscrtanim poligonima.
+       */
+      function poligonCQL() {
+        temp_poligon !== "" && (temp_poligon = "(" + temp_poligon + ")");
+        return temp_poligon;
       }
     </script>
   </body>
