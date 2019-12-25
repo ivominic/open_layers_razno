@@ -32,8 +32,8 @@
           <li>
             <a href="#filter" role="tab"><i class="fa fa-bars"></i></a>
           </li>
-          <li>
-            <a href="#podaci" role="tab"><i class="fa fa-globe"></i></a>
+          <li id="lipodaci">
+            <a href="#podaci" role="tab" id="linkpodaci"><i class="fa fa-globe"></i></a>
           </li>
         </ul>
       </div>
@@ -88,6 +88,7 @@
         <div class="sidebar-pane" id="podaci">
           <h1 class="sidebar-header">
             Podaci<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+            <div class="form-group" style="color: darkslategray;"><dl id="dlpodaci"></dl></div>
           </h1>
         </div>
       </div>
@@ -161,15 +162,19 @@
       popuniDdlAtributa();
 
       function popuniKontrole(lejer, odgovor) {
-        var atributi = odgovor.features[0]["properties"];
+        $("#lipodaci").attr("class") !== "active" && $("#linkpodaci").click();
+        var metapodaci = odgovor.features[0]["properties"];
         idObjekta = odgovor.features[0]["id"];
 
-        //console.log(lejer, odgovor);
+        console.log(lejer, atributi);
 
         //slika
-        var slika = atributi["url_fotografije"];
+        var slika = metapodaci["url_fotografije"];
         slika.length && (slika = slika.substring(slika.lastIndexOf("/") + 1, slika.length));
         overlay.getElement().innerHTML = '<a target="_blank" href="' + imageUrl + slika + '"><img src="' + imageUrl + slika + '"></a>';
+
+        //atributi[lejer].forEach(item => console.log(item + ": " + metapodaci[item]));
+        atributi[lejer.replace(/ /g, "_")].forEach(item => $("#dlpodaci").append("<dt>" + item.replace(/_/g, " ") + "</dt><dd>" + metapodaci[item] + "</dd>"));
       }
 
       //Da na ENTER ima istu funkcionalnost kao na save
@@ -181,8 +186,11 @@
 
       function restartovanje() {
         idObjekta = "";
-
         overlay.getElement().innerHTML = "";
+        //Sklanja panel da se ne prikazuje
+        $("#lipodaci").attr("class") === "active" && $("#linkpodaci").click();
+        //TODO: prikaz podataka
+        $("#dlpodaci").empty();
       }
 
       var drveceLejer = new ol.layer.Tile({
