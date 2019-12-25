@@ -22,26 +22,3 @@ img {
 /*img:hover {
   box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
 }*/
-
-dl {
-  margin-bottom: 50px;
-}
-
-dl dt {
-  background: #5f9be3;
-  color: #fff;
-  float: left;
-  font-weight: bold;
-  margin-right: 10px;
-  padding: 5px;
-  width: 100px;
-}
-
-dl dd {
-  margin: 2px 0;
-  padding: 5px 0;
-}
-
-dd {
-  display: inline-block;
-}

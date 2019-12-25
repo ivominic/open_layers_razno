@@ -88,7 +88,18 @@
         <div class="sidebar-pane" id="podaci">
           <h1 class="sidebar-header">
             Podaci<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
-            <div class="form-group" style="color: darkslategray;"><dl id="dlpodaci"></dl></div>
+            <div class="form-group" style="color: darkslategray; font-size: smaller;">
+              <table id="tblPodaci" class=" table order-list table-responsive">
+                <thead>
+                  <tr>
+                    <th>Atribut</th>
+                    <th>Vrijednost</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
           </h1>
         </div>
       </div>
@@ -173,8 +184,18 @@
         slika.length && (slika = slika.substring(slika.lastIndexOf("/") + 1, slika.length));
         overlay.getElement().innerHTML = '<a target="_blank" href="' + imageUrl + slika + '"><img src="' + imageUrl + slika + '"></a>';
 
+        var tabelaPodaci = $("#tblPodaci > TBODY")[0];
         //atributi[lejer].forEach(item => console.log(item + ": " + metapodaci[item]));
-        atributi[lejer.replace(/ /g, "_")].forEach(item => $("#dlpodaci").append("<dt>" + item.replace(/_/g, " ") + "</dt><dd>" + metapodaci[item] + "</dd>"));
+        //atributi[lejer.replace(/ /g, "_")].forEach(item => $("#dlpodaci").append("<dt>" + item.replace(/_/g, " ") + "</dt><dd>" + metapodaci[item] + "</dd>"));
+        atributi[lejer.replace(/ /g, "_")].forEach(item => {
+          var vrsta = tabelaPodaci.insertRow(-1);
+          var celija = $(vrsta.insertCell(-1));
+          celija.html(item.replace(/_/g, " "));
+          celija = $(vrsta.insertCell(-1));
+          celija.html(metapodaci[item]);
+
+          $("#dlpodaci").append("<dt>" + item.replace(/_/g, " ") + "</dt><dd>" + metapodaci[item] + "</dd>");
+        });
       }
 
       //Da na ENTER ima istu funkcionalnost kao na save
@@ -189,8 +210,9 @@
         overlay.getElement().innerHTML = "";
         //Sklanja panel da se ne prikazuje
         $("#lipodaci").attr("class") === "active" && $("#linkpodaci").click();
-        //TODO: prikaz podataka
-        $("#dlpodaci").empty();
+        $("#tblPodaci")
+          .find("tr")
+          .remove();
       }
 
       var drveceLejer = new ol.layer.Tile({
@@ -280,12 +302,14 @@
                 title: "Open Street Maps",
                 type: "base",
                 visible: true,
+                maxZoom: 16,
                 source: new ol.source.OSM()
               }),
               new ol.layer.Tile({
                 title: "Open Topo Maps",
                 type: "base",
                 visible: true,
+                maxZoom: 16,
                 source: new ol.source.XYZ({
                   url: "https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png"
                 })
@@ -294,6 +318,7 @@
                 title: "Pješačka mapa",
                 type: "base",
                 visible: true,
+                maxZoom: 16,
                 source: new ol.source.XYZ({
                   url: "https://tiles.wmflabs.org/hikebike/{z}/{x}/{y}.png"
                 })
@@ -302,6 +327,7 @@
                 title: "Road Maps",
                 type: "base",
                 visible: true,
+                maxZoom: 16,
                 source: new ol.source.XYZ({
                   url:
                     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}" /*,
@@ -316,6 +342,7 @@
               new ol.layer.Tile({
                 title: "Satelitski snimak",
                 type: "base",
+                maxZoom: 16,
                 source: new ol.source.XYZ({
                   url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
                   maxZoom: 23
